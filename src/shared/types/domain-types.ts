@@ -173,14 +173,13 @@ export type Album = {
     albumArtist: string;
     albumArtists: RelatedArtist[];
     artists: RelatedArtist[];
-    backdropImageUrl: null | string;
     comment: null | string;
     createdAt: string;
     duration: null | number;
     explicitStatus: ExplicitStatus | null;
     genres: Genre[];
     id: string;
-    imagePlaceholderUrl: null | string;
+    imageId: null | string;
     imageUrl: null | string;
     isCompilation: boolean | null;
     lastPlayedAt: null | string;
@@ -208,11 +207,11 @@ export type AlbumArtist = {
     _serverId: string;
     _serverType: ServerType;
     albumCount: null | number;
-    backgroundImageUrl: null | string;
     biography: null | string;
     duration: null | number;
     genres: Genre[];
     id: string;
+    imageId: null | string;
     imageUrl: null | string;
     lastPlayedAt: null | string;
     mbz: null | string;
@@ -294,6 +293,7 @@ export type Genre = {
     _serverType: ServerType;
     albumCount: null | number;
     id: string;
+    imageId: null | string;
     imageUrl: null | string;
     name: string;
     songCount: null | number;
@@ -334,7 +334,7 @@ export type Playlist = {
     duration: null | number;
     genres: Genre[];
     id: string;
-    imagePlaceholderUrl: null | string;
+    imageId: null | string;
     imageUrl: null | string;
     name: string;
     owner: null | string;
@@ -353,6 +353,7 @@ export type RelatedAlbumArtist = {
 
 export type RelatedArtist = {
     id: string;
+    imageId: null | string;
     imageUrl: null | string;
     name: string;
 };
@@ -381,7 +382,7 @@ export type Song = {
     gain: GainInfo | null;
     genres: Genre[];
     id: string;
-    imagePlaceholderUrl: null | string;
+    imageId: null | string;
     imageUrl: null | string;
     lastPlayedAt: null | string;
     lyrics: null | string;
@@ -1281,6 +1282,7 @@ export type ControllerEndpoint = {
     getDownloadUrl: (args: DownloadArgs) => string;
     getFolder: (args: FolderArgs) => Promise<FolderResponse>;
     getGenreList: (args: GenreListArgs) => Promise<GenreListResponse>;
+    getImageUrl: (args: ImageArgs) => null | string;
     getLyrics?: (args: LyricsArgs) => Promise<LyricsResponse>;
     getMusicFolderList: (args: MusicFolderListArgs) => Promise<MusicFolderListResponse>;
     getPlaylistDetail: (args: PlaylistDetailArgs) => Promise<PlaylistDetailResponse>;
@@ -1328,6 +1330,16 @@ export type FontData = {
     style: string;
 };
 
+export type ImageArgs = BaseEndpointArgs & {
+    query: ImageQuery;
+};
+
+export type ImageQuery = {
+    id: string;
+    itemType: LibraryItem;
+    size?: number;
+};
+
 export type InternalControllerEndpoint = {
     addToPlaylist: (
         args: ReplaceApiClientProps<AddToPlaylistArgs>,
@@ -1363,6 +1375,7 @@ export type InternalControllerEndpoint = {
     getDownloadUrl: (args: ReplaceApiClientProps<DownloadArgs>) => string;
     getFolder: (args: ReplaceApiClientProps<FolderArgs>) => Promise<FolderResponse>;
     getGenreList: (args: ReplaceApiClientProps<GenreListArgs>) => Promise<GenreListResponse>;
+    getImageUrl: (args: ReplaceApiClientProps<ImageArgs>) => null | string;
     getLyrics?: (args: ReplaceApiClientProps<LyricsArgs>) => Promise<LyricsResponse>;
     getMusicFolderList: (
         args: ReplaceApiClientProps<MusicFolderListArgs>,
