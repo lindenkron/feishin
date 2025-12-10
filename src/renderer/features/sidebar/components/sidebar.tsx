@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import styles from './sidebar.module.css';
 
+import { useItemImageUrl } from '/@/renderer/components/item-image/item-image';
 import { ContextMenuController } from '/@/renderer/features/context-menu/context-menu-controller';
 import { ActionBar } from '/@/renderer/features/sidebar/components/action-bar';
 import { ServerSelector } from '/@/renderer/features/sidebar/components/server-selector';
@@ -147,10 +148,11 @@ const SidebarImage = () => {
     const { setSideBar } = useAppStoreActions();
     const currentSong = usePlayerSong();
 
-    const upsizedImageUrl = currentSong?.imageUrl
-        ?.replace(/size=\d+/, 'size=450')
-        .replace(/width=\d+/, 'width=450')
-        .replace(/height=\d+/, 'height=450');
+    const imageUrl = useItemImageUrl({
+        id: currentSong?.id,
+        itemType: LibraryItem.SONG,
+        type: 'xl',
+    });
 
     const isSongDefined = Boolean(currentSong?.id);
 
@@ -198,8 +200,8 @@ const SidebarImage = () => {
                     postProcess: 'sentenceCase',
                 })}
             >
-                {upsizedImageUrl ? (
-                    <img className={styles.sidebarImage} loading="eager" src={upsizedImageUrl} />
+                {imageUrl ? (
+                    <img className={styles.sidebarImage} loading="eager" src={imageUrl} />
                 ) : (
                     <ImageUnloader />
                 )}

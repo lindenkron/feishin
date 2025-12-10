@@ -7,6 +7,7 @@ import { shallow } from 'zustand/shallow';
 
 import styles from './left-controls.module.css';
 
+import { ItemImage } from '/@/renderer/components/item-image/item-image';
 import { ContextMenuController } from '/@/renderer/features/context-menu/context-menu-controller';
 import { AppRoute } from '/@/renderer/router/routes';
 import {
@@ -19,7 +20,6 @@ import {
 } from '/@/renderer/store';
 import { ActionIcon } from '/@/shared/components/action-icon/action-icon';
 import { Group } from '/@/shared/components/group/group';
-import { Image } from '/@/shared/components/image/image';
 import { Separator } from '/@/shared/components/separator/separator';
 import { Text } from '/@/shared/components/text/text';
 import { Tooltip } from '/@/shared/components/tooltip/tooltip';
@@ -112,13 +112,14 @@ export const LeftControls = () => {
                                     })}
                                     openDelay={0}
                                 >
-                                    <Image
+                                    <ItemImage
                                         className={clsx(
                                             styles.playerbarImage,
                                             PlaybackSelectors.playerCoverArt,
                                         )}
+                                        id={currentSong?.id}
+                                        itemType={LibraryItem.SONG}
                                         loading="eager"
-                                        src={currentSong?.imageUrl ?? ''}
                                     />
                                 </Tooltip>
                                 {!collapsed && (

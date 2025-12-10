@@ -1,16 +1,17 @@
 import { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { api } from '/@/renderer/api';
 import { SONG_TABLE_COLUMNS } from '/@/renderer/components/item-list/item-table-list/default-columns';
 import { ItemListHandle } from '/@/renderer/components/item-list/types';
 import { usePlayer } from '/@/renderer/features/player/context/player-context';
 import { updateSong } from '/@/renderer/features/player/update-remote-song';
 import { ListConfigMenu } from '/@/renderer/features/shared/components/list-config-menu';
 import { SearchInput } from '/@/renderer/features/shared/components/search-input';
-import { usePlayerSong, usePlayerStoreBase } from '/@/renderer/store';
+import { useCurrentServerId, usePlayerSong, usePlayerStoreBase } from '/@/renderer/store';
 import { ActionIcon } from '/@/shared/components/action-icon/action-icon';
 import { Group } from '/@/shared/components/group/group';
-import { QueueSong } from '/@/shared/types/domain-types';
+import { LibraryItem, QueueSong } from '/@/shared/types/domain-types';
 import { ItemListKey, ListDisplayType } from '/@/shared/types/types';
 
 interface PlayQueueListOptionsProps {
@@ -29,6 +30,7 @@ export const PlayQueueListControls = ({
     const { t } = useTranslation();
     const player = usePlayer();
     const currentSong = usePlayerSong();
+    const serverId = useCurrentServerId();
 
     const handleMoveToNext = () => {
         const selectedItems = tableRef?.current?.internalState.getSelected() as
@@ -69,12 +71,23 @@ export const PlayQueueListControls = ({
         if (isCurrentSongRemoved) {
             // Get the new current song after removal
             const newCurrentSong = usePlayerStoreBase.getState().getCurrentSong();
-            updateSong(newCurrentSong);
+            // Calculate imageUrl for the new song
+            const newImageUrl = newCurrentSong
+                ? newCurrentSong.imageUrl ||
+                  (newCurrentSong.id && serverId
+                      ? api.controller.getImageUrl({
+                            apiClientProps: { serverId },
+                            query: { id: newCurrentSong.id, itemType: LibraryItem.SONG, size: 300 },
+                        }) || undefined
+                      : undefined)
+                : undefined;
+            updateSong(newCurrentSong, newImageUrl);
         }
     };
 
     const handleClearQueue = () => {
         player.clearQueue();
+        updateSong(undefined);
     };
 
     const handleShuffleQueue = () => {
